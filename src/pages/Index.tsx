@@ -4,16 +4,21 @@ import { RulesList } from "@/components/dashboard/RulesList";
 import { DivergenceTable } from "@/components/dashboard/DivergenceTable";
 import { ValidationPanel } from "@/components/dashboard/ValidationPanel";
 import { ReportsSection } from "@/components/dashboard/ReportsSection";
+import { Button } from "@/components/ui/button";
 import {
-  CheckCircle2,
-  AlertTriangle,
-  XCircle,
-  Clock,
   Database,
   TrendingUp,
+  Pickaxe,
 } from "lucide-react";
 
+
+
 const Index = () => {
+
+  const CarregaCampanhas = () =>{
+    
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card">
@@ -47,47 +52,35 @@ const Index = () => {
               description="Campanhas processadas"
               variant="default"
             />
-            <StatsCard
-              title="Válidas"
-              value="42"
-              icon={CheckCircle2}
-              description="87.5% aprovadas"
-              variant="success"
-            />
-            <StatsCard
-              title="Divergências"
-              value="4"
-              icon={AlertTriangle}
-              description="8.3% com alertas"
-              variant="warning"
-            />
-            <StatsCard
-              title="Não Encontradas"
-              value="2"
-              icon={XCircle}
-              description="4.2% ausentes"
-              variant="destructive"
-            />
-            <StatsCard
-              title="Última Validação"
-              value="14:32"
-              icon={Clock}
-              description="26/11/2024"
-              variant="default"
-            />
-            <StatsCard
-              title="Status SQL"
-              value="Online"
-              icon={Database}
-              description="Conexão ativa"
-              variant="success"
-            />
+           
           </div>
         </section>
 
         {/* Parâmetros das Campanhas */}
         <section>
           <h2 className="text-2xl font-semibold mb-4">Parâmetros das Campanhas</h2>
+          <strong>Quais campanhas você quer validar?</strong>
+          <div className="flex flex-row items-start gap-8 my-3">
+            <div className="flex gap-2 justify-center items-center">
+              <input type="checkbox" name="Campanhas" id=""/>
+              <p className="text-center">Campanha Televendas</p>
+            </div>
+             <div className="flex gap-2 justify-center items-center">
+              <input type="checkbox" name="Campanhas" id=""/>
+              <p className="text-center">Campanha Alimentar</p>
+            </div>
+             <div className="flex gap-2 justify-center items-center">
+              <input type="checkbox" name="Campanhas" id=""/>
+              <p className="text-center">Campanha Farma</p>
+            </div>
+            {/* botao de carregar campanhas */}
+            <div className="ml-auto">
+              <Button size="sm" onClick={CarregaCampanhas}>
+                <Pickaxe className="h-4 w-4 mr-2" />
+                Carregar tabela
+              </Button>
+            </div>            
+          </div>
           <CampaignTable />
         </section>
 
