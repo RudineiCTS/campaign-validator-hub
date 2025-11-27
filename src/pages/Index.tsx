@@ -11,15 +11,59 @@ import {
   Pickaxe,
 } from "lucide-react";
 
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { useState } from "react";
+import { formatDateToSQL } from "@/utils/convertedDate";
+import { dtoParametersCampaign } from "@/interfaces/TypeCampaign";
+import { CampaignController } from "@/Controller/CampaignController";
 
+
+interface CategoryCampaign{
+  campaignPharma: boolean,
+  campaignTeleSeller:boolean,
+  campignFeed: boolean
+}
 
 const Index = () => {
+  const [competencyDate, setCompetencyDate]= useState<string>();
+  const [categoryCampaign, setCategoryCampaign] = useState<CategoryCampaign>({ 
+    campaignPharma:false,
+    campaignTeleSeller: false,
+    campignFeed:false
+  }as CategoryCampaign);
 
-  const CarregaCampanhas = () =>{
+  const SelectedCampaignToSearch =(typeCampaign: keyof CategoryCampaign)=>{
+    setCategoryCampaign(prev =>({
+      ...prev,
+      [typeCampaign]: !prev[typeCampaign]
+    }))
+  }
+
+  const SelectedCompetencyDate = (value:Date)=>{    
+    const dateFormated = formatDateToSQL(value);
+    console.log(dateFormated);
+    setCompetencyDate(dateFormated);
+  }
+
+  const CarregaCampanhas = async() =>{
     
+    const dataToSearch: dtoParametersCampaign = {
+      dataCompetencia: competencyDate,
+      isToSearchCampaingToPharma: categoryCampaign.campaignPharma === true ? 1 : 0,
+      isToSearchCampaingToFeed:categoryCampaign.campignFeed === true ? 1 : 0,
+      isToSearchToTelesales: categoryCampaign.campaignTeleSeller === true ? 1 : 0
+    }
+
+    const  campaignController = new CampaignController();
+
+    const campaign = await campaignController.listAll(dataToSearch)
+    console.log(campaign)
   }
 
   return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-6">
@@ -59,18 +103,29 @@ const Index = () => {
         {/* Parâmetros das Campanhas */}
         <section>
           <h2 className="text-2xl font-semibold mb-4">Parâmetros das Campanhas</h2>
-          <strong>Quais campanhas você quer validar?</strong>
+          <h3 className="text-lg font-semibold mb-4">Quais campanhas você quer validar?</h3>
+          <div className="mt-4 ">
+            <DatePicker
+              label="Data de competência" 
+              slotProps={{
+                textField:{
+                  size: "small"                
+                }
+              }}
+              onChange={(e)=>SelectedCompetencyDate(e.toDate())}
+            />
+          </div>
           <div className="flex flex-row items-start gap-8 my-3">
             <div className="flex gap-2 justify-center items-center">
-              <input type="checkbox" name="Campanhas" id=""/>
+              <input type="checkbox" name="campaignTeleSeller" onChange={(e)=>SelectedCampaignToSearch(e.target.name as keyof CategoryCampaign)} checked={categoryCampaign.campaignTeleSeller}/>
               <p className="text-center">Campanha Televendas</p>
             </div>
              <div className="flex gap-2 justify-center items-center">
-              <input type="checkbox" name="Campanhas" id=""/>
+              <input type="checkbox" name="campignFeed" onChange={(e)=>SelectedCampaignToSearch(e.target.name as keyof CategoryCampaign)} checked={categoryCampaign.campignFeed}/>
               <p className="text-center">Campanha Alimentar</p>
             </div>
              <div className="flex gap-2 justify-center items-center">
-              <input type="checkbox" name="Campanhas" id=""/>
+              <input type="checkbox" name="campaignPharma"  onChange={(e)=>SelectedCampaignToSearch(e.target.name as keyof CategoryCampaign)} checked={categoryCampaign.campaignPharma}/>
               <p className="text-center">Campanha Farma</p>
             </div>
             {/* botao de carregar campanhas */}
@@ -109,6 +164,7 @@ const Index = () => {
         </section>
       </main>
     </div>
+  </LocalizationProvider>
   );
 };
 

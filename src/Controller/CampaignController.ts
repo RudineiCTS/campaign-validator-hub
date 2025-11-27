@@ -1,15 +1,13 @@
+import { dtoParametersCampaign } from "@/interfaces/TypeCampaign";
 import { CampaignRepository } from "../repositories/CampaignRepositories";
 
-export class CampaignService {
+
+export class CampaignController {
   private repository = new CampaignRepository();
 
-  async listAll() {
-    const campaigns = await this.repository.getCampaigns();
-
-    return campaigns.map(c => ({
-      ...c,
-      status: c.totalValue === c.individualSum ? "OK" : "DIVERGENTE"
-    }));
+  async listAll(data:dtoParametersCampaign) {
+    const campaigns = await this.repository.getCampaigns(data)
+    return campaigns
   }
 
   async getOne(id: number) {
