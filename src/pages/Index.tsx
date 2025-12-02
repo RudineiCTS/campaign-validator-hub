@@ -17,7 +17,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useState } from "react";
 import { formatDateToSQL } from "@/utils/convertedDate";
 import { dtoParametersCampaign } from "@/interfaces/TypeCampaign";
-import { CampaignController } from "@/Controller/CampaignController";
+import service from '../service/service'
 
 
 interface CategoryCampaign{
@@ -56,9 +56,16 @@ const Index = () => {
       isToSearchToTelesales: categoryCampaign.campaignTeleSeller === true ? 1 : 0
     }
 
-    const  campaignController = new CampaignController();
+    const campaign = await service.post<any>('/api/campanhas',{
+      competencyDate:"2025-11-30",
+	    isToSearchCampaingToFeed:0,
+	    isToSearchCampaingToPharma:1,
+	    isToSearchToTelesales:1
+      
+    });
+    console.log(campaign);
 
-    const campaign = await campaignController.listAll(dataToSearch)
+    
     console.log(campaign)
   }
 
