@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CampaignRow, IPharmaCampign } from "@/interfaces/TypeCampaign";
 
 interface Campaign {
   id: string;
@@ -26,51 +27,29 @@ interface Campaign {
   endDate: string;
   totalValue: number;
   individualSum: number;
-  status: "ok" | "divergent" | "not_found";
+  status: "Aberto"  ;
 }
 
-const mockCampaigns: Campaign[] = [
-  {
-    id: "CMP-2024-001",
-    name: "Campanha Verão 2024",
-    startDate: "2024-01-15",
-    endDate: "2024-02-28",
-    totalValue: 150000,
-    individualSum: 150000,
-    status: "ok",
-  },
-  {
-    id: "CMP-2024-002",
-    name: "Black Friday 2024",
-    startDate: "2024-11-20",
-    endDate: "2024-11-30",
-    totalValue: 250000,
-    individualSum: 248500,
-    status: "divergent",
-  },
-  {
-    id: "CMP-2024-003",
-    name: "Natal Premium",
-    startDate: "2024-12-01",
-    endDate: "2024-12-25",
-    totalValue: 180000,
-    individualSum: 180000,
-    status: "ok",
-  },
-];
+interface DTOCampaingTable{
+  data:IPharmaCampign[]
+}
 
-export function CampaignTable() {
+export function CampaignTable({data}:DTOCampaingTable) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [sortField, setSortField] = useState<keyof Campaign>("id");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
-  const filteredCampaigns = mockCampaigns
+  const filteredCampaigns = data 
     .filter(campaign => {
-      const matchesSearch = campaign.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        campaign.name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = statusFilter === "all" || campaign.status === statusFilter;
-      return matchesSearch && matchesStatus;
+      const search = searchTerm.toLowerCase();
+      console.log(data)
+      const matchesSearch =
+        search === "" ||
+        campaign.idCampanha === Number(searchTerm) ||
+        campaign.campanha?.toLowerCase().includes(search);
+
+      return matchesSearch;
     })
     .sort((a, b) => {
       const aVal = a[sortField];
@@ -78,6 +57,7 @@ export function CampaignTable() {
       const direction = sortDirection === "asc" ? 1 : -1;
       return aVal > bVal ? direction : -direction;
     });
+
 
   const handleSort = (field: keyof Campaign) => {
     if (sortField === field) {
@@ -90,8 +70,8 @@ export function CampaignTable() {
 
   const getStatusBadge = (status: Campaign["status"]) => {
     const variants = {
-      ok: { label: "Válida", className: "bg-success text-success-foreground" },
-      divergent: { label: "Divergente", className: "bg-warning text-warning-foreground" },
+      ok: { label: "Aberto", className: "bg-success text-success-foreground" },
+      divergent: { label: "Fechado", className: "bg-warning text-warning-foreground" },
       not_found: { label: "Não Encontrada", className: "bg-destructive text-destructive-foreground" },
     };
     const variant = variants[status];
@@ -129,8 +109,8 @@ export function CampaignTable() {
         </Select>
       </div>
 
-      <div className="rounded-md border">
-        <Table>
+      <div className="rounded-md border overflow-x-auto">
+        <Table className="min-w-max">
           <TableHeader>
             <TableRow>
               <TableHead>
@@ -150,31 +130,48 @@ export function CampaignTable() {
                   onClick={() => handleSort("name")}
                   className="font-medium"
                 >
-                  Nome <SortIcon field="name" />
+                  Campanha <SortIcon field="name" />
                 </Button>
               </TableHead>
               <TableHead>Data Início</TableHead>
               <TableHead>Data Fim</TableHead>
-              <TableHead className="text-right">Valor Total</TableHead>
-              <TableHead className="text-right">Soma Individual</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead >Calculo</TableHead>
+              <TableHead >Apuração</TableHead>
+              <TableHead >Objetivo</TableHead>
+              <TableHead >Meta</TableHead>
+              <TableHead >Ranking</TableHead>
+              <TableHead >Valor</TableHead>
+              <TableHead >Premição Total</TableHead>
+              <TableHead >Recebimento</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredCampaigns.length > 0 ? (
               filteredCampaigns.map((campaign) => (
-                <TableRow key={campaign.id}>
-                  <TableCell className="font-medium">{campaign.id}</TableCell>
-                  <TableCell>{campaign.name}</TableCell>
-                  <TableCell>{new Date(campaign.startDate).toLocaleDateString('pt-BR')}</TableCell>
-                  <TableCell>{new Date(campaign.endDate).toLocaleDateString('pt-BR')}</TableCell>
+                <TableRow key={campaign.idCampanha}>
+                  <TableCell className="font-medium">{campaign.idCampanha}</TableCell>
+                  <TableCell>{campaign.campanha}</TableCell>
+                  <TableCell>{new Date(campaign.dataInicio).toLocaleDateString('pt-BR')}</TableCell>
+                  <TableCell>{new Date(campaign.dataFim).toLocaleDateString('pt-BR')}</TableCell>
+                  <TableCell>{campaign.calculo}</TableCell>
+                  <TableCell>{campaign.apuracao}</TableCell>
                   <TableCell className="text-right">
-                    {campaign.totalValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    {campaign.objetivo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </TableCell>
+                  {/* <TableCell>{campaign.objetivo}</TableCell> */}
+                  <TableCell>{campaign.meta}</TableCell>
+                  <TableCell>{campaign.ranking}</TableCell>
+                  <TableCell>{campaign.valor}</TableCell>
+                  {/* <TableCell>{campaign.premiacaoTotal}</TableCell> */}
                   <TableCell className="text-right">
+                    {campaign.premiacaoTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  </TableCell>
+                  <TableCell>{campaign.recebimentoPremiacao}</TableCell>
+                  {/* <TableCell>{getStatusBadge(campaign.situacao)}</TableCell> */}
+                  
+                  {/* <TableCell className="text-right">
                     {campaign.individualSum.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                  </TableCell>
-                  <TableCell>{getStatusBadge(campaign.status)}</TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))
             ) : (

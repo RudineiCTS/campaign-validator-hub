@@ -16,7 +16,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useState } from "react";
 import { formatDateToSQL } from "@/utils/convertedDate";
-import { dtoParametersCampaign } from "@/interfaces/TypeCampaign";
+import { CampaignRow, dtoParametersCampaign, IPharmaCampign, ITelesalesCampaing, ReturnCampaign } from "@/interfaces/TypeCampaign";
 import service from '../service/service'
 
 
@@ -33,6 +33,8 @@ const Index = () => {
     campaignTeleSeller: false,
     campignFeed:false
   }as CategoryCampaign);
+  const [campaignPharma, SetCampaignPharma] = useState<CampaignRow[]>([]);
+  const [campaignTelesale, SetCampaignTelesale] = useState<CampaignRow[]>([]);
 
   const SelectedCampaignToSearch =(typeCampaign: keyof CategoryCampaign)=>{
     setCategoryCampaign(prev =>({
@@ -48,27 +50,42 @@ const Index = () => {
   }
 
   const CarregaCampanhas = async() =>{
+    SetCampaignPharma([]);
+    try {
+          const dataToSearch: dtoParametersCampaign = {
+            dataCompetencia: competencyDate,
+            isToSearchCampaingToPharma: categoryCampaign.campaignPharma === true ? 1 : 0,
+            isToSearchCampaingToFeed:categoryCampaign.campignFeed === true ? 1 : 0,
+            isToSearchToTelesales: categoryCampaign.campaignTeleSeller === true ? 1 : 0
+          }
+
+        const campaign = await service.post('/api/campanhas',{
+          competencyDate:"2025-11-30",
+          isToSearchCampaingToFeed:0,
+          isToSearchCampaingToPharma:1,
+          isToSearchToTelesales:1          
+        });
+      
+        const campanhas =  campaign.data as CampaignRow[]
+        CarregaDataTable(campanhas)
+    } catch (error) {
+      
+    }    
     
-    const dataToSearch: dtoParametersCampaign = {
-      dataCompetencia: competencyDate,
-      isToSearchCampaingToPharma: categoryCampaign.campaignPharma === true ? 1 : 0,
-      isToSearchCampaingToFeed:categoryCampaign.campignFeed === true ? 1 : 0,
-      isToSearchToTelesales: categoryCampaign.campaignTeleSeller === true ? 1 : 0
+  }
+function CarregaDataTable(campanhas: CampaignRow[]) {
+  campanhas.forEach((value) => {
+    if (value.type === 'Farma') {
+      SetCampaignPharma(prev => [...prev, value]);
     }
 
-    const campaign = await service.post<any>('/api/campanhas',{
-      competencyDate:"2025-11-30",
-	    isToSearchCampaingToFeed:0,
-	    isToSearchCampaingToPharma:1,
-	    isToSearchToTelesales:1
-      
-    });
-    console.log(campaign);
+    if (value.type === 'Televendas') {
+      SetCampaignTelesale(prev => [...prev, value]);
+    }
+  });
 
-    
-    console.log(campaign)
-  }
-
+  console.log(campaignPharma);
+}
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
     <div className="min-h-screen bg-background">
@@ -143,7 +160,7 @@ const Index = () => {
               </Button>
             </div>            
           </div>
-          <CampaignTable />
+          <CampaignTable data={campaignPharma as IPharmaCampign[]}/>
         </section>
 
         {/* Regras de Validação */}

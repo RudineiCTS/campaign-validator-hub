@@ -1,10 +1,11 @@
 export interface IPharmaCampign{
+  type:string,
   idCampanha: number;
   campanha: string;
   competencia: string | Date;
   dataInicio: string | Date;
   dataFim: string | Date;
-  calculo: string;
+  Calculo: string;
   apuracao: string;
   objetivo: number;
   meta: string;
@@ -16,6 +17,7 @@ export interface IPharmaCampign{
 }
 
 export interface ITelesalesCampaing {
+  type:string,
   idCampanha: number;
   campanha: string;
   dataInicio: string | Date;
@@ -28,9 +30,6 @@ export interface ITelesalesCampaing {
   consideraExclusiva: 'SIM' | 'NÃO';
 }
 
-export interface ReturnCampaign {
-  Campaign: Array<IPharmaCampign|ITelesalesCampaing|any>
-}
 
 export interface dtoParametersCampaign {
   dataCompetencia:string| Date, 
@@ -38,3 +37,13 @@ export interface dtoParametersCampaign {
   isToSearchCampaingToPharma: number,
   isToSearchToTelesales: number
 }
+
+
+export interface ReturnCampaign {
+  Campaigns: CampaignRow[];
+}
+
+export type CampaignRow =
+  | IPharmaCampign
+  | ITelesalesCampaing
+
