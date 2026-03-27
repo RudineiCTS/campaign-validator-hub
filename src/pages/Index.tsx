@@ -16,7 +16,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useState } from "react";
 import { formatDateToSQL } from "@/utils/convertedDate";
-import { CampaignRow, dtoParametersCampaign, IPharmaCampign, ITelesalesCampaing, ReturnCampaign } from "@/interfaces/TypeCampaign";
+import { CampaignRow, dtoParametersCampaign, IPharmaCampign } from "@/interfaces/TypeCampaign";
 import service from '../service/service'
 
 
@@ -34,7 +34,7 @@ const Index = () => {
     campignFeed:false
   }as CategoryCampaign);
   const [campaignPharma, SetCampaignPharma] = useState<CampaignRow[]>([]);
-  const [campaignTelesale, SetCampaignTelesale] = useState<CampaignRow[]>([]);
+  // const [campaignTelesale, SetCampaignTelesale] = useState<CampaignRow[]>([]);
 
   const SelectedCampaignToSearch =(typeCampaign: keyof CategoryCampaign)=>{
     setCategoryCampaign(prev =>({
@@ -51,6 +51,9 @@ const Index = () => {
 
   const CarregaCampanhas = async() =>{
     SetCampaignPharma([]);
+    if(competencyDate === null){
+      return;
+    }
     try {
           const dataToSearch: dtoParametersCampaign = {
             dataCompetencia: competencyDate,
@@ -60,10 +63,10 @@ const Index = () => {
           }
 
         const campaign = await service.post('/api/campanhas',{
-          competencyDate:"2025-11-30",
-          isToSearchCampaingToFeed:0,
-          isToSearchCampaingToPharma:1,
-          isToSearchToTelesales:1          
+          competencyDate:dataToSearch.dataCompetencia,
+          isToSearchCampaingToFeed:dataToSearch.isToSearchCampaingToFeed,
+          isToSearchCampaingToPharma:dataToSearch.isToSearchCampaingToPharma,
+          isToSearchToTelesales:dataToSearch.isToSearchToTelesales          
         });
       
         const campanhas =  campaign.data as CampaignRow[]
@@ -75,13 +78,13 @@ const Index = () => {
   }
 function CarregaDataTable(campanhas: CampaignRow[]) {
   campanhas.forEach((value) => {
-    if (value.type === 'Farma') {
+    if (value.type === 'Televendas') {
       SetCampaignPharma(prev => [...prev, value]);
     }
 
-    if (value.type === 'Televendas') {
-      SetCampaignTelesale(prev => [...prev, value]);
-    }
+    // if (value.type === 'Televendas') {
+    //   SetCampaignTelesale(prev => [...prev, value]);
+    // }
   });
 
   console.log(campaignPharma);

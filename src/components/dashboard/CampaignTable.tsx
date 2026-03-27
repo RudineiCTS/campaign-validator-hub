@@ -166,7 +166,7 @@ export function CampaignTable({data}:DTOCampaingTable) {
                   <TableCell className="text-right">
                     {campaign.premiacaoTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </TableCell>
-                  <TableCell>{campaign.recebimentoPremiacao}</TableCell>
+                  <TableCell>{campaign.recebimentoPremiacao?? 0}</TableCell>
                   {/* <TableCell>{getStatusBadge(campaign.situacao)}</TableCell> */}
                   
                   {/* <TableCell className="text-right">
