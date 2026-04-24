@@ -18,6 +18,7 @@ import { useState } from "react";
 import { formatDateToSQL } from "@/utils/convertedDate";
 import { CampaignRow, dtoParametersCampaign, IPharmaCampign } from "@/interfaces/TypeCampaign";
 import service from '../service/service'
+import  ReadFileTeste  from "@/test/readFileTestJson";
 
 
 interface CategoryCampaign{
@@ -62,17 +63,18 @@ const Index = () => {
             isToSearchToTelesales: categoryCampaign.campaignTeleSeller === true ? 1 : 0
           }
 
-        const campaign = await service.post('/api/campanhas',{
-          competencyDate:dataToSearch.dataCompetencia,
-          isToSearchCampaingToFeed:dataToSearch.isToSearchCampaingToFeed,
-          isToSearchCampaingToPharma:dataToSearch.isToSearchCampaingToPharma,
-          isToSearchToTelesales:dataToSearch.isToSearchToTelesales          
-        });
+        // const campaign = await service.post('/api/campanhas',{
+        //   competencyDate:dataToSearch.dataCompetencia,
+        //   isToSearchCampaingToFeed:dataToSearch.isToSearchCampaingToFeed,
+        //   isToSearchCampaingToPharma:dataToSearch.isToSearchCampaingToPharma,
+        //   isToSearchToTelesales:dataToSearch.isToSearchToTelesales          
+        // });
       
-        const campanhas =  campaign.data as CampaignRow[]
-        CarregaDataTable(campanhas)
+        // const campanhas =  campaign.data as CampaignRow[]
+        const readFileTeste = await ReadFileTeste()
+        CarregaDataTable(readFileTeste)
     } catch (error) {
-      
+      console.log("erro")
     }    
     
   }
