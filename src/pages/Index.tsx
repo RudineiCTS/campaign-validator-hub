@@ -18,7 +18,11 @@ import { useState } from "react";
 import { formatDateToSQL } from "@/utils/convertedDate";
 import { CampaignRow, dtoParametersCampaign, IPharmaCampign } from "@/interfaces/TypeCampaign";
 import service from '../service/service'
-import  ReadFileTeste  from "@/test/readFileTestJson";
+import serviceTest from "@/service/service.test";
+import { HeaderDash } from "@/components/dashboard/HeaderDashBoard";
+import { ContainerRadioButton } from "@/components/dashboard/ContainerRadioButton";
+import { Modal } from "@/components/modal/ModalComponents";
+import { Input } from "@/components/ui/input";
 
 
 interface CategoryCampaign{
@@ -71,47 +75,78 @@ const Index = () => {
         // });
       
         // const campanhas =  campaign.data as CampaignRow[]
-        const readFileTeste = await ReadFileTeste()
-        CarregaDataTable(readFileTeste)
+          
+        const campaign = await serviceTest.get(
+          "https://raw.githubusercontent.com/RudineiCTS/campaign-validator-hub/main/src/test/campanhas.json"
+        );
+        console.log(campaign)
     } catch (error) {
       console.log("erro")
     }    
     
   }
 function CarregaDataTable(campanhas: CampaignRow[]) {
-  campanhas.forEach((value) => {
-    if (value.type === 'Televendas') {
-      SetCampaignPharma(prev => [...prev, value]);
-    }
 
-    // if (value.type === 'Televendas') {
-    //   SetCampaignTelesale(prev => [...prev, value]);
-    // }
-  });
 
   console.log(campaignPharma);
 }
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">
-                Dashboard de Validação de Campanhas
-              </h1>
-              <p className="text-muted-foreground mt-1">
-                Valide e monitore suas campanhas em tempo real
-              </p>
+     <Modal isOpen={true} onClose={() => console.log()}>
+        <h2 className="text-xl font-bold">Campanha teste</h2>
+        <div className="mt-2">
+          <ul className="flex gap-4 ">
+            <li className="border-cyan-200 px-2 py-1 border-solid border-2 rounded-xl">Premio</li>
+            <li className="border-cyan-200 px-2 py-1 border-solid border-2 rounded-xl">Produtos</li>
+            <li className="border-cyan-200 px-2 py-1 border-solid border-2 rounded-xl">Clientes Participantes</li>            
+          </ul>
+          <div className="mt-3 ">
+            <h3 className="font-semibold">Parametros Base</h3>
+            <div className="flex flex-col gap-4">
+
+            
+            <div className="flex gap-4">
+              <div>
+                <label className="font-normal text-gray-700">
+                  Fabricantes
+                  <Input 
+                    value={"1 ;3 ;5"}
+                    />
+                </label>
+              </div>
+              <div>
+                <label className="font-normal text-gray-700">
+                  Linha de Produtos
+                  <Input 
+                    value={"1 ;3 ;5"}
+                    />
+                </label>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Database className="h-5 w-5 text-success" />
-              <span className="text-sm font-medium text-success">SQL Conectado</span>
+            
+            <div>
+                <label className="font-normal text-gray-700">
+                  Tipo Meta
+                  <Input 
+                    value={"1 ;3 ;5"}
+                    />
+                </label>
+              </div>
+              <div>
+                <label className="font-normal text-gray-700">
+                  Tipo de Apuração
+                  <Input 
+                    value={"1 ;3 ;5"}
+                    />
+                </label>
+              </div>         
             </div>
           </div>
         </div>
-      </header>
+        
+      </Modal>
+    <div className="min-h-screen bg-background">
+      <HeaderDash/>
 
       <main className="container mx-auto px-4 py-8 space-y-8">
         {/* Visão Geral - Stats Cards */}
@@ -119,20 +154,19 @@ function CarregaDataTable(campanhas: CampaignRow[]) {
           <h2 className="text-2xl font-semibold mb-4">Visão Geral</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             <StatsCard
-              title="Total Analisadas"
+              title="Campanhas Cadastradas"
               value="48"
               icon={TrendingUp}
               description="Campanhas processadas"
               variant="default"
-            />
-           
+            />           
           </div>
         </section>
 
         {/* Parâmetros das Campanhas */}
         <section>
           <h2 className="text-2xl font-semibold mb-4">Parâmetros das Campanhas</h2>
-          <h3 className="text-lg font-semibold mb-4">Quais campanhas você quer validar?</h3>
+          <h3 className="text-muted-foreground mb-4">Selecione o filtro</h3>
           <div className="mt-4 ">
             <DatePicker
               label="Data de competência" 
@@ -145,18 +179,9 @@ function CarregaDataTable(campanhas: CampaignRow[]) {
             />
           </div>
           <div className="flex flex-row items-start gap-8 my-3">
-            <div className="flex gap-2 justify-center items-center">
-              <input type="checkbox" name="campaignTeleSeller" onChange={(e)=>SelectedCampaignToSearch(e.target.name as keyof CategoryCampaign)} checked={categoryCampaign.campaignTeleSeller}/>
-              <p className="text-center">Campanha Televendas</p>
-            </div>
-             <div className="flex gap-2 justify-center items-center">
-              <input type="checkbox" name="campignFeed" onChange={(e)=>SelectedCampaignToSearch(e.target.name as keyof CategoryCampaign)} checked={categoryCampaign.campignFeed}/>
-              <p className="text-center">Campanha Alimentar</p>
-            </div>
-             <div className="flex gap-2 justify-center items-center">
-              <input type="checkbox" name="campaignPharma"  onChange={(e)=>SelectedCampaignToSearch(e.target.name as keyof CategoryCampaign)} checked={categoryCampaign.campaignPharma}/>
-              <p className="text-center">Campanha Farma</p>
-            </div>
+          <ContainerRadioButton
+
+          />
             {/* botao de carregar campanhas */}
             <div className="ml-auto">
               <Button size="sm" onClick={CarregaCampanhas}>
@@ -174,23 +199,6 @@ function CarregaDataTable(campanhas: CampaignRow[]) {
           <RulesList />
         </section>
 
-        {/* Divergências */}
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Divergências Identificadas</h2>
-          <DivergenceTable />
-        </section>
-
-        {/* Execução de Validação */}
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Executar Validação</h2>
-          <ValidationPanel />
-        </section>
-
-        {/* Relatórios */}
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Relatórios e Histórico</h2>
-          <ReportsSection />
-        </section>
       </main>
     </div>
   </LocalizationProvider>
