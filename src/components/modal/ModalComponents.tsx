@@ -1,4 +1,7 @@
 import { ReactNode } from "react";
+import { Input } from "../ui/input";
+import { ParametrosCampanha } from "./ParametrosCampaignModal";
+import { ProdutosCampanha } from "./ProdutosCampanha";
 
 interface ModalProps {
   isOpen: boolean;
@@ -16,10 +19,29 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
         className="absolute inset-0 bg-black/50"
         onClick={onClose}
       />
-
+       <div className="relative bg-white rounded-2xl p-6 shadow-lg z-10 min-w-[300px]">
+        <h2 className="text-xl font-bold mb-4">Campanha teste</h2>
+          <ul className="flex gap-4 ">
+            <li 
+              className={`border-cyan-200 px-2 py-1 border-solid border-2 rounded-xl cursor-pointer transition-all duration-200 hover:scale-105 hover:border-cyan-400 ${1 === 1 && "border-cyan-700  bg-cyan-100"} `}>
+              Parametros 
+            </li>
+            <li className="border-cyan-200 px-2 py-1 border-solid border-2 rounded-xl cursor-pointer transition-all duration-200 hover:scale-105 hover:border-cyan-400">
+              Premio
+            </li>
+            <li className="border-cyan-200 px-2 py-1 border-solid border-2 rounded-xl cursor-pointer transition-all duration-200 hover:scale-105 hover:border-cyan-400">
+              Produtos
+            </li>
+            <li className="border-cyan-200 px-2 py-1 border-solid border-2 rounded-xl cursor-pointer transition-all duration-200 hover:scale-105 hover:border-cyan-400">
+              Clientes Participantes
+            </li>            
+          </ul>
       {/* Conteúdo */}
-      <div className="relative bg-white rounded-2xl p-6 shadow-lg z-10 min-w-[300px]">
-        {children}
+        
+                
+        {/* {children} */}
+        {/* <ParametrosCampanha /> */}
+        <ProdutosCampanha/>
 
         <button
           onClick={onClose}
@@ -27,7 +49,7 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
         >
           Fechar
         </button>
-      </div>
+        </div>
     </div>
   );
 }

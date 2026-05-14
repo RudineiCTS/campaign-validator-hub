@@ -92,58 +92,9 @@ function CarregaDataTable(campanhas: CampaignRow[]) {
 }
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-     <Modal isOpen={true} onClose={() => console.log()}>
-        <h2 className="text-xl font-bold">Campanha teste</h2>
-        <div className="mt-2">
-          <ul className="flex gap-4 ">
-            <li className="border-cyan-200 px-2 py-1 border-solid border-2 rounded-xl">Premio</li>
-            <li className="border-cyan-200 px-2 py-1 border-solid border-2 rounded-xl">Produtos</li>
-            <li className="border-cyan-200 px-2 py-1 border-solid border-2 rounded-xl">Clientes Participantes</li>            
-          </ul>
-          <div className="mt-3 ">
-            <h3 className="font-semibold">Parametros Base</h3>
-            <div className="flex flex-col gap-4">
 
-            
-            <div className="flex gap-4">
-              <div>
-                <label className="font-normal text-gray-700">
-                  Fabricantes
-                  <Input 
-                    value={"1 ;3 ;5"}
-                    />
-                </label>
-              </div>
-              <div>
-                <label className="font-normal text-gray-700">
-                  Linha de Produtos
-                  <Input 
-                    value={"1 ;3 ;5"}
-                    />
-                </label>
-              </div>
-            </div>
-            
-            <div>
-                <label className="font-normal text-gray-700">
-                  Tipo Meta
-                  <Input 
-                    value={"1 ;3 ;5"}
-                    />
-                </label>
-              </div>
-              <div>
-                <label className="font-normal text-gray-700">
-                  Tipo de Apuração
-                  <Input 
-                    value={"1 ;3 ;5"}
-                    />
-                </label>
-              </div>         
-            </div>
-          </div>
-        </div>
-        
+     <Modal isOpen={true} onClose={() => console.log()}>
+        <></>
       </Modal>
     <div className="min-h-screen bg-background">
       <HeaderDash/>
